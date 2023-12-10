@@ -1,0 +1,86 @@
+#!/system/bin/sh
+#
+# Copyright 2021 Google LLC. All Rights Reserved.
+#
+# Lynx Calibration Sub-Script.
+#
+# Contains L10-specific sensor information for sensor_cal.
+
+# Sensors supported for calibration.
+SUPPORTED_SENSORS="accel als baro gyro imu_temp prox"
+NON_CAL_PHYSICAL_SENSORS="mag"
+
+#######################################
+# Converts a sensor name to its path.
+# Globals:
+#   CAL_PARAMS
+#   SENSOR
+#   SENSOR_NAME
+#   SENSOR_PATH
+# Arguments:
+#   None
+# Outputs:
+#   Saves the sensor path in SENSOR_PATH.
+#   Logging based on set VERBOSITY level.
+#######################################
+sensor_cal::sensor_to_path() {
+  if [[ "${SENSOR}" == "accel" ]]; then
+    SENSOR_PATH="/fac_cal/dev/lsm6dsv/0/accel"
+    SENSOR_NAME="lsm6dsv"
+    LIST_NAME="LSM6DSV Accelerometer"
+    # Add "avg_odr_30" in addition to the original parameters.
+    CAL_PARAMS+=" avg_odr_30"
+  elif [[ "${SENSOR}" == "als" ]]; then
+    SENSOR_PATH="/fac_cal/dev/tmd3719/0/als"
+    SENSOR_NAME="tmd3719"
+    LIST_NAME="TMD3719 Ambient Light"
+    CAL_PARAMS=" \
+      clear_gain6_ratio clear_gain7_ratio clear_gain8_ratio clear_gain9_ratio \
+      clear_gain10_ratio clear_gain11_ratio \
+      red_gain6_ratio red_gain7_ratio red_gain8_ratio red_gain9_ratio \
+      red_gain10_ratio red_gain11_ratio red_clear_ratio \
+      green_gain6_ratio green_gain7_ratio green_gain8_ratio green_gain9_ratio \
+      green_gain10_ratio green_gain11_ratio green_clear_ratio \
+      blue_gain6_ratio blue_gain7_ratio blue_gain8_ratio blue_gain9_ratio \
+      blue_gain10_ratio blue_gain11_ratio blue_clear_ratio \
+      disp_leak lux_scale panel_serial \
+      sync_delay_ns sync_delay_2_ns"
+  elif [[ "${SENSOR}" == "baro" ]]; then
+    SENSOR_PATH="/fac_cal/dev/icp20100/0/baro"
+    SENSOR_NAME="icp20100"
+    LIST_NAME="ICP20100 Pressure Sensor"
+    # Add "temp_intercept" in addition to the original parameters.
+    CAL_PARAMS+=" temp_intercept"
+  elif [[ "${SENSOR}" == "gyro" ]]; then
+    SENSOR_PATH="/fac_cal/dev/lsm6dsv/0/gyro"
+    SENSOR_NAME="lsm6dsv"
+    LIST_NAME="LSM6DSV Gyroscope"
+    # Add "avg_odr_30" in addition to the original parameters.
+    CAL_PARAMS+=" avg_odr_30"
+  elif [[ "${SENSOR}" == "imu_temp" ]]; then
+    SENSOR_PATH="/fac_cal/dev/lsm6dsv/0/temp"
+    SENSOR_NAME="lsm6dsv"
+    LIST_NAME="LSM6DSV Temperature"
+  elif [[ "${SENSOR}" == "prox" ]]; then
+    SENSOR_PATH="/fac_cal/dev/tmd3719/0/prox"
+    SENSOR_NAME="tmd3719"
+    LIST_NAME="TMD3719 Proximity"
+    CAL_PARAMS=" \
+      hp_pdata0_baseline hp_pdata1_baseline hp_pdata0_offset hp_pdata1_offset \
+      hp_pdata0_scale hp_pdata1_scale \
+      pdata0_baseline pdata1_baseline pdata0_scale pdata1_scale vcsel_ma"
+
+  ###############################
+  ## Non cal physical sensors. ##
+  ###############################
+  elif [[ "${SENSOR}" == "mag" ]]; then
+    LIST_NAME="MMC56X3X Magnetometer"
+
+
+  else
+    sensor_cal::ERROR "Unknown or unimplemented sensor: ${SENSOR}"
+    sensor_cal::exit_badparam
+  fi
+
+  sensor_cal::DEBUG "Registry path: ${SENSOR_PATH}"
+}
