@@ -4,7 +4,6 @@
 
 soong_namespace {
     imports: [
-        "device/google/lynx",
         "hardware/google/av",
         "hardware/google/interfaces",
         "hardware/google/pixel",
