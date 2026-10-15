@@ -1,3 +1,5 @@
+# Deprecated: This file is used only by P23-. Do not touch.
+
 on property:vendor.touch.gti0.ical=*
     setprop vendor.touch.gti0.ical.state init
     start touch_gti0_ical

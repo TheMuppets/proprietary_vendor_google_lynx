@@ -1,4 +1,6 @@
 #!/vendor/bin/sh
+
+# Deprecated: This file is used only by P23-. Do not touch.
 path="/sys/devices/virtual/goog_touch_interface/gti.0"
 procfs_path="/proc/goog_touch_interface/gti.0"
 
